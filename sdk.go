@@ -51,13 +51,13 @@ func (s *Sdk) GetServiceUrl(serviceName string) string {
 		return url
 	}
 
-	url = cienv.GetEnv(fmt.Sprintf("DEPLOYMENT_%s_HOST"))
+	url = cienv.GetEnv(fmt.Sprintf("DEPLOYMENT_%s_HOST", serviceName))
 	if url != "" {
 		s.services[serviceName] = url
 		return url
 	}
 
-	url = cienv.GetEnv(fmt.Sprintf("WORKSPACE_%s_HOST"))
+	url = cienv.GetEnv(fmt.Sprintf("WORKSPACE_%s_HOST", serviceName))
 	if url != "" {
 		s.services[serviceName] = url
 		return url

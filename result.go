@@ -1,9 +1,9 @@
 package golang_sdk
 
 type Result struct {
-	State int
-	Msg   string
-	Data  interface{}
+	State int `json:"state"`
+	Msg   string `json:"msg"`
+	Data  interface{} `json:"data"`
 }
 
 func ErrorResult(state int, msg string) *Result {

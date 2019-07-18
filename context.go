@@ -69,7 +69,12 @@ func (ctx *ApiContext) PostJson(service string, api string, jsonData map[string]
 }
 
 func (ctx *ApiContext) CallWithOptions(service string, options ...CallOption) *Result {
-	config := &CallConfig{}
+	config := &CallConfig{
+		Method: "get",
+		Path:   "",
+		Header: &http.Header{},
+		Body:   strings.NewReader(""),
+	}
 	for _, opt := range options {
 		opt(config)
 	}
@@ -83,6 +88,7 @@ func (ctx *ApiContext) Call(service string, config *CallConfig) *Result {
 		return ErrorResult(ErrServiceNotFound, fmt.Sprintf("service %s not found", service))
 	}
 
+	config.Method = strings.ToUpper(config.Method)
 	request, err := http.NewRequest(config.Method, fmt.Sprintf("%s/%s", serviceUrl, config.Path), config.Body)
 	if err != nil {
 		return ErrorResult(ErrUnknownError, err.Error())
@@ -118,7 +124,7 @@ func (ctx *ApiContext) Call(service string, config *CallConfig) *Result {
 	}
 
 	result := &Result{}
-	err = json.Unmarshal(bodyData, &response)
+	err = json.Unmarshal(bodyData, &result)
 	if err != nil {
 		return ErrorResult(ErrResponseContentTypeError, fmt.Sprintf("invalid json format"))
 	}
