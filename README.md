@@ -1,4 +1,4 @@
-# golang version sdk form Oneitfarm 
+# golang version sdk for Oneitfarm 
 
 ## Usage:
 
