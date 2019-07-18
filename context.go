@@ -28,6 +28,34 @@ func (ctx *ApiContext) init() {
 
 }
 
+func (ctx *ApiContext) ReturnOk(data interface{}) {
+	ctx.Return(&Result{
+		State: 1,
+		Data:  data,
+		Msg:   "ok",
+	})
+}
+
+func (ctx *ApiContext) ReturnError(state int, msg string) {
+	ctx.Return(&Result{
+		State: state,
+		Msg:   msg,
+	})
+}
+
+func (ctx *ApiContext) Return(result *Result) {
+	var err error
+	data, err := json.Marshal(result)
+	if err != nil {
+		panic(fmt.Errorf("json marshal error:%v", err))
+	}
+	ctx.requestContext.GetWriter().Header().Set("Content-Type", "application/json")
+	_, err = ctx.requestContext.GetWriter().Write(data)
+	if err != nil {
+		panic(fmt.Errorf("write response error:%v", err))
+	}
+}
+
 func (ctx *ApiContext) Get(service string, api string) *Result {
 	return ctx.CallWithOptions(service, WithApi(api), WithMethod("get"))
 }
@@ -99,8 +127,8 @@ func (ctx *ApiContext) Call(service string, config *CallConfig) *Result {
 }
 
 type RequestContext interface {
-	GetHeader(name string) string
 	GetRequest() *http.Request
+	GetWriter() http.ResponseWriter
 }
 
 func WithApi(api string) CallOption {
